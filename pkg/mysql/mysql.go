@@ -11,7 +11,7 @@ var DB *gorm.DB
 
 func DataBaseInit() {
 	var err error
-	dsn := "root:@tcp(localhost:3306)/ibox?charset=utf8mb4&parseTime=True&loc=Local"
+	dsn := "root:@tcp(localhost:3306)/preschool_db?charset=utf8mb4&parseTime=True&loc=Local"
 	DB, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
 
 	if err != nil {

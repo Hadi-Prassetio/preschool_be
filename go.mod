@@ -1,4 +1,4 @@
-module ibox
+module preschool
 
 go 1.19
 

@@ -3,9 +3,9 @@ package middleware
 import (
 	"context"
 	"encoding/json"
-	dto "ibox/dto/result"
-	jwtToken "ibox/pkg/jwt"
 	"net/http"
+	dto "preschool/dto/result"
+	jwtToken "preschool/pkg/jwt"
 	"strings"
 )
 
@@ -38,7 +38,7 @@ func Auth(next http.HandlerFunc) http.HandlerFunc {
 			return
 		}
 
-		ctx := context.WithValue(r.Context(), "userInfo", claims)
+		ctx := context.WithValue(r.Context(), "adminInfo", claims)
 		r = r.WithContext(ctx)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})

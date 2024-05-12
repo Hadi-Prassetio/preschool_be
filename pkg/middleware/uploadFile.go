@@ -4,10 +4,10 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	dto "ibox/dto/result"
 	"io"
 	"io/ioutil"
 	"net/http"
+	dto "preschool/dto/result"
 )
 
 func UploadFile(next http.HandlerFunc) http.HandlerFunc {

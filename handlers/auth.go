@@ -3,15 +3,14 @@ package handlers
 import (
 	"encoding/json"
 	"fmt"
-	authdto "ibox/dto/auth"
-	dto "ibox/dto/result"
-	"ibox/models"
-	"ibox/pkg/bcrypt"
-	jwtToken "ibox/pkg/jwt"
-	"ibox/repositories"
 	"log"
 	"net/http"
-	"os"
+	authdto "preschool/dto/auth"
+	dto "preschool/dto/result"
+	"preschool/models"
+	"preschool/pkg/bcrypt"
+	jwtToken "preschool/pkg/jwt"
+	"preschool/repositories"
 	"time"
 
 	"github.com/go-playground/validator/v10"
@@ -61,16 +60,15 @@ func (h *handlerAuth) Register(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user := models.User{
-		Fullname: request.Fullname,
-		Email:    request.Email,
-		Password: password,
-		Gender:   request.Gender,
-		Phone:    request.Phone,
-		Role:     "user",
+	admin := models.Admin{
+		FullName:  request.FullName,
+		AdminName: request.AdminName,
+		Email:     request.Email,
+		Phone:     request.Phone,
+		Password:  password,
 	}
 
-	data, err := h.AuthRepository.Register(user)
+	data, err := h.AuthRepository.Register(admin)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		response := dto.ErrorResult{Code: http.StatusInternalServerError, Message: err.Error()}
@@ -94,13 +92,13 @@ func (h *handlerAuth) Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user := models.User{
+	admin := models.Admin{
 		Email:    request.Email,
 		Password: request.Password,
 	}
 
 	// Check email
-	user, err := h.AuthRepository.Login(user.Email)
+	admin, err := h.AuthRepository.Login(admin.Email)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		response := dto.ErrorResult{Code: http.StatusBadRequest, Message: err.Error()}
@@ -109,7 +107,7 @@ func (h *handlerAuth) Login(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Check password
-	isValid := bcrypt.CheckPasswordHash(request.Password, user.Password)
+	isValid := bcrypt.CheckPasswordHash(request.Password, admin.Password)
 	if !isValid {
 		w.WriteHeader(http.StatusBadRequest)
 		response := dto.ErrorResult{Code: http.StatusBadRequest, Message: "wrong email or password"}
@@ -119,10 +117,8 @@ func (h *handlerAuth) Login(w http.ResponseWriter, r *http.Request) {
 
 	//generate token
 	claims := jwt.MapClaims{}
-	claims["id"] = user.ID
-	claims["fullname"] = user.Fullname
-	claims["email"] = user.Email
-	claims["phone"] = user.Phone
+	claims["id"] = admin.ID
+	claims["fullname"] = admin.FullName
 	claims["exp"] = time.Now().Add(time.Hour * 2).Unix() // 2 hours expired
 
 	token, errGenerateToken := jwtToken.GenerateToken(&claims)
@@ -133,12 +129,9 @@ func (h *handlerAuth) Login(w http.ResponseWriter, r *http.Request) {
 	}
 
 	loginResponse := authdto.ResponseLogin{
-		ID:       user.ID,
-		Fullname: user.Fullname,
-		Email:    user.Email,
-		Phone:    user.Phone,
-		Role:     user.Role,
-		Gender:   user.Gender,
+		ID:       admin.ID,
+		FullName: admin.FullName,
+		Email:    admin.Email,
 		Token:    token,
 	}
 
@@ -151,11 +144,11 @@ func (h *handlerAuth) Login(w http.ResponseWriter, r *http.Request) {
 func (h *handlerAuth) CheckAuth(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
-	userInfo := r.Context().Value("userInfo").(jwt.MapClaims)
-	userId := int(userInfo["id"].(float64))
+	adminInfo := r.Context().Value("adminInfo").(jwt.MapClaims)
+	adminId := int(adminInfo["id"].(float64))
 
-	// Check User by Id
-	user, err := h.AuthRepository.Getuser(userId)
+	// Check Admin by Id
+	admin, err := h.AuthRepository.Getadmin(adminId)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		response := dto.ErrorResult{Code: http.StatusBadRequest, Message: err.Error()}
@@ -164,16 +157,10 @@ func (h *handlerAuth) CheckAuth(w http.ResponseWriter, r *http.Request) {
 	}
 
 	CheckAuthResponse := authdto.CheckAuthResponse{
-		ID:       user.ID,
-		Fullname: user.Fullname,
-		Gender:   user.Gender,
-		Email:    user.Email,
-		Phone:    user.Phone,
-		Image:    user.Image,
-		Role:     user.Role,
+		ID:       admin.ID,
+		FullName: admin.FullName,
+		Email:    admin.Email,
 	}
-
-	CheckAuthResponse.Image = os.Getenv("PATH_FILE") + CheckAuthResponse.Image
 
 	w.Header().Set("Content-Type", "application/json")
 	response := dto.SuccessResult{Code: http.StatusOK, Data: CheckAuthResponse}

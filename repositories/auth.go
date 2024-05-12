@@ -1,36 +1,36 @@
 package repositories
 
 import (
-	"ibox/models"
+	"preschool/models"
 
 	"gorm.io/gorm"
 )
 
 type AuthRepository interface {
-	Register(user models.User) (models.User, error)
-	Login(email string) (models.User, error)
-	Getuser(ID int) (models.User, error)
+	Register(admin models.Admin) (models.Admin, error)
+	Login(email string) (models.Admin, error)
+	Getadmin(ID int) (models.Admin, error)
 }
 
 func RepositoryAuth(db *gorm.DB) *repository {
 	return &repository{db}
 }
 
-func (r *repository) Register(user models.User) (models.User, error) {
-	err := r.db.Create(&user).Error
-	return user, err
+func (r *repository) Register(admin models.Admin) (models.Admin, error) {
+	err := r.db.Create(&admin).Error
+	return admin, err
 }
 
-func (r *repository) Login(email string) (models.User, error) {
-	var user models.User
-	err := r.db.First(&user, "email=?", email).Error
+func (r *repository) Login(email string) (models.Admin, error) {
+	var admin models.Admin
+	err := r.db.First(&admin, "email=?", email).Error
 
-	return user, err
+	return admin, err
 }
 
-func (r *repository) Getuser(ID int) (models.User, error) {
-	var user models.User
-	err := r.db.First(&user, ID).Error
+func (r *repository) Getadmin(ID int) (models.Admin, error) {
+	var admin models.Admin
+	err := r.db.First(&admin, ID).Error
 
-	return user, err
+	return admin, err
 }

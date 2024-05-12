@@ -2,12 +2,12 @@ package database
 
 import (
 	"fmt"
-	"ibox/models"
-	"ibox/pkg/mysql"
+	"preschool/models"
+	"preschool/pkg/mysql"
 )
 
 func RunMigration() {
-	err := mysql.DB.AutoMigrate(&models.User{}, &models.Product{}, &models.Transaction{}, &models.Cart{}, &models.Order{})
+	err := mysql.DB.AutoMigrate(&models.Admin{}, &models.Teacher{})
 
 	if err != nil {
 		fmt.Println(err)

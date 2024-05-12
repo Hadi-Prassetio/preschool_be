@@ -1,17 +1,17 @@
 package routes
 
 import (
-	"ibox/handlers"
-	"ibox/pkg/middleware"
-	"ibox/pkg/mysql"
-	"ibox/repositories"
+	"preschool/handlers"
+	"preschool/pkg/middleware"
+	"preschool/pkg/mysql"
+	"preschool/repositories"
 
 	"github.com/gorilla/mux"
 )
 
 func AuthRoutes(r *mux.Router) {
-	userRepository := repositories.RepositoryUser(mysql.DB)
-	h := handlers.HandlerAuth(userRepository)
+	adminRepository := repositories.RepositoryAdmin(mysql.DB)
+	h := handlers.HandlerAuth(adminRepository)
 
 	r.HandleFunc("/register", h.Register).Methods("POST")
 	r.HandleFunc("/login", h.Login).Methods("POST")

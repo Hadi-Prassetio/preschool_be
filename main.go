@@ -2,10 +2,10 @@ package main
 
 import (
 	"fmt"
-	"ibox/database"
-	"ibox/pkg/mysql"
-	"ibox/routes"
 	"net/http"
+	"preschool/database"
+	"preschool/pkg/mysql"
+	"preschool/routes"
 
 	"github.com/gorilla/handlers"
 	"github.com/joho/godotenv"
