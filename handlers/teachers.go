@@ -58,6 +58,22 @@ func (h *handlerTeacher) CreateTeacher(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-type", "aplication/json")
 
 	request := new(teacherdto.CreateTeacher)
+	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		response := dto.ErrorResult{Code: http.StatusBadRequest, Message: err.Error()}
+		json.NewEncoder(w).Encode(response)
+		return
+	}
+
+	validation := validator.New()
+	err := validation.Struct(request)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		response := dto.ErrorResult{Code: http.StatusBadRequest, Message: err.Error()}
+		json.NewEncoder(w).Encode(response)
+		return
+	}
+
 	teacher := models.Teacher{
 		FullName: request.FullName,
 		Email: request.Email,
@@ -83,15 +99,10 @@ func (h *handlerTeacher) UpdateTeacher(w http.ResponseWriter, r *http.Request) {
 	id, _ := strconv.Atoi(mux.Vars(r)["id"])
 
 	request := new(teacherdto.UpdateTeacher)
-
-	validation := validator.New()
-	err := validation.Struct(request)
-
-	if err != nil {
+	if err := json.NewDecoder(r.Body).Decode(request); err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		response := dto.ErrorResult{Code: http.StatusBadRequest, Message: err.Error()}
 		json.NewEncoder(w).Encode(response)
-		return
 	}
 
 	teacher, _ := h.TeacherRepository.GetTeacher(id)

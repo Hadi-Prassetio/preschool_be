@@ -8,7 +8,7 @@ type Teacher struct {
 	Email     string    `json:"email" gorm:"type: varchar(70)"`
 	Phone     string    `json:"phone" gorm:"type: varchar(15)"`
 	Subject   string    `json:"subject" gorm:"type: varchar(100)"`
-	Register  string       `json:"register" gorm:"type:int"`
+	Register  string    `json:"register" gorm:"type:varchar(100)"`
 	CreatedAt time.Time `json:"-"`
 	UpdatedAt time.Time `json:"-"`
 }
