@@ -8,6 +8,7 @@ import (
 	"preschool/models"
 	"preschool/repositories"
 	"strconv"
+	"time"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/gorilla/mux"
@@ -48,7 +49,6 @@ func (h *handlerTeacher) GetTeacher(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-
 	w.WriteHeader(http.StatusOK)
 	response := dto.SuccessResult{Code: http.StatusOK, Data: teacher}
 	json.NewEncoder(w).Encode(response)
@@ -76,10 +76,10 @@ func (h *handlerTeacher) CreateTeacher(w http.ResponseWriter, r *http.Request) {
 
 	teacher := models.Teacher{
 		FullName: request.FullName,
-		Email: request.Email,
-		Phone: request.Phone,
-		Subject: request.Subject,
-		Register: request.Register,
+		Email:    request.Email,
+		Phone:    request.Phone,
+		ClassID:  request.ClassID,
+		AdminID:  request.AdminID,
 	}
 	data, err := h.TeacherRepository.CreateTeacher(teacher)
 	if err != nil {
@@ -107,18 +107,19 @@ func (h *handlerTeacher) UpdateTeacher(w http.ResponseWriter, r *http.Request) {
 
 	teacher, _ := h.TeacherRepository.GetTeacher(id)
 
-	if request.FullName!=""{
+	if request.FullName != "" {
 		teacher.FullName = request.FullName
 	}
-	if request.Email!=""{
+	if request.Email != "" {
 		teacher.Email = request.Email
 	}
-	if request.Phone!=""{
+	if request.Phone != "" {
 		teacher.Phone = request.Phone
 	}
-	if request.Subject!=""{
-		teacher.Subject = request.Subject
+	if request.ClassID != 0 {
+		teacher.ClassID = request.ClassID
 	}
+	teacher.UpdatedAt = time.Now()
 
 	data, err := h.TeacherRepository.UpdateTeacher(teacher)
 	if err != nil {

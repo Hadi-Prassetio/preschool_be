@@ -61,11 +61,12 @@ func (h *handlerAuth) Register(w http.ResponseWriter, r *http.Request) {
 	}
 
 	admin := models.Admin{
-		FullName:  request.FullName,
-		AdminName: request.AdminName,
-		Email:     request.Email,
-		Phone:     request.Phone,
-		Password:  password,
+		FullName:      request.FullName,
+		AdminUserName: request.AdminUserName,
+		Email:         request.Email,
+		Phone:         request.Phone,
+		Password:      password,
+		Role: 		   request.Role,
 	}
 
 	data, err := h.AuthRepository.Register(admin)
@@ -160,6 +161,7 @@ func (h *handlerAuth) CheckAuth(w http.ResponseWriter, r *http.Request) {
 		ID:       admin.ID,
 		FullName: admin.FullName,
 		Email:    admin.Email,
+		Role:	  admin.Role,
 	}
 
 	w.Header().Set("Content-Type", "application/json")
