@@ -4,5 +4,9 @@ import "github.com/gorilla/mux"
 
 func RouteInit(r *mux.Router) {
 	TeacherRoutes(r)
-	AuthRoutes(r)
+	AdminRoutes(r)
+	VisitorRoutes(r)
+	ClassRoutes(r)
+	EnrollmentRoutes(r)
+	PageRoutes(r)
 }
