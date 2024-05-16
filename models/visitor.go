@@ -11,8 +11,8 @@ type Visitor struct {
 	ChildAge  int          `json:"child_age" gorm:"type: integer(2)"`
 	Message   string       `json:"message" gorm:"type:varchar(225)"`
 	Status    string       `json:"status" gorm:"type:varchar(100)"`
-	AdminID   int          `json:"admin_id"`
-	Admin     AdminProfile `json:"admin"`
+	AdminID   int          `json:"admin_id" gorm:"foreignKey:VisitorID"`
+	Admin     AdminProfile `json:"-" gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 	CreatedAt time.Time    `json:"-"`
 	UpdatedAt time.Time    `json:"-"`
 }
@@ -31,4 +31,18 @@ type VisitorDetail struct {
 
 func (VisitorDetail) TableName() string {
 	return "visitors"
+}
+type CreateVisitor struct {
+	Name      string `json:"name" validate:"required"`
+	Email     string `json:"email" validate:"required"`
+	Phone     string `json:"phone" validate:"required"`
+	ChildName string `json:"child_name" validate:"required"`
+	ChildAge  int    `json:"child_age" validate:"required"`
+	Message   string `json:"message" validate:"required"`
+	Status    string `json:"status"`
+	AdminID   int    `json:"admin_id"`
+}
+type UpdateVisitor struct {
+	Status    string `json:"status"`
+	AdminID   int    `json:"admin_id"`
 }
