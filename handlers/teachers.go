@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"net/http"
 	dto "preschool/dto/result"
-	teacherdto "preschool/dto/teacher"
 	"preschool/models"
 	"preschool/repositories"
 	"strconv"
@@ -57,7 +56,7 @@ func (h *handlerTeacher) GetTeacher(w http.ResponseWriter, r *http.Request) {
 func (h *handlerTeacher) CreateTeacher(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-type", "aplication/json")
 
-	request := new(teacherdto.CreateTeacher)
+	request := new(models.CreateTeacher)
 	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		response := dto.ErrorResult{Code: http.StatusBadRequest, Message: err.Error()}
@@ -76,10 +75,10 @@ func (h *handlerTeacher) CreateTeacher(w http.ResponseWriter, r *http.Request) {
 
 	teacher := models.Teacher{
 		FullName: request.FullName,
-		Email:    request.Email,
-		Phone:    request.Phone,
-		ClassID:  request.ClassID,
-		AdminID:  request.AdminID,
+		Email   : request.Email   ,
+		Phone   : request.Phone   ,
+		ClassID : request.ClassID ,
+		AdminID : 1               ,
 	}
 	data, err := h.TeacherRepository.CreateTeacher(teacher)
 	if err != nil {
@@ -98,14 +97,14 @@ func (h *handlerTeacher) UpdateTeacher(w http.ResponseWriter, r *http.Request) {
 
 	id, _ := strconv.Atoi(mux.Vars(r)["id"])
 
-	request := new(teacherdto.UpdateTeacher)
+	request := new(models.UpdateTeacher)
 	if err := json.NewDecoder(r.Body).Decode(request); err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		response := dto.ErrorResult{Code: http.StatusBadRequest, Message: err.Error()}
 		json.NewEncoder(w).Encode(response)
 	}
 
-	teacher, _ := h.TeacherRepository.GetTeacher(id)
+	teacher, _ := h.TeacherRepository.GetTeacherUpdate(id)
 
 	if request.FullName != "" {
 		teacher.FullName = request.FullName
